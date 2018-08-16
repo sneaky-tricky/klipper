@@ -32,6 +32,11 @@ $(OUT)klipper.bin: $(OUT)klipper.elf
 	@echo "  Creating bin file $@"
 	$(Q)$(OBJCOPY) -O binary $< $@
 
-flash: $(OUT)klipper.bin
+# Flash rules
+lib/bossac/bin/bossac:
+	@echo "  Building bossac"
+	$(Q)make -C lib/bossac bin/bossac
+
+flash: $(OUT)klipper.bin lib/bossac/bin/bossac
 	@echo "  Flashing $^ to $(FLASH_DEVICE) via bossac"
-	$(Q)tools/bossa/bin/bossac --port="$(FLASH_DEVICE)" -b -U -e -w -v $(OUT)klipper.bin -R
+	$(Q)lib/bossac/bin/bossac --port="$(FLASH_DEVICE)" -b -U -e -w -v $(OUT)klipper.bin -R
